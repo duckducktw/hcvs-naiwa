@@ -161,5 +161,13 @@ corner_js=r"""
 R("  let pi=3;const pet0=pet.onclick;","  "+corner_js.strip()+"\n  let pi=3;const pet0=pet.onclick;")
 s=s.replace("document.title","document.title")
 s=s.replace('<title>國立新竹高級工業職業學校（非官方奶龍風重製）</title>','<title>國立新竹高級工業職業學校（非官方奶龍雷霆重製）</title>')
+# 校名（UNITS 資料裡的單位名不動，只改顯示用）
+s=s.replace('<title>國立新竹高級工業職業學校（','<title>國立新竹奶龍工業職業學校（')
+s=s.replace('<b>國立新竹高級工業職業學校</b>','<b>國立新竹奶龍工業職業學校</b>')
+s=s.replace('<h5>國立新竹高級工業職業學校</h5>','<h5>國立新竹奶龍工業職業學校</h5>')
+s=s.replace('版權所有 @ 2018, 國立新竹高級工業職業學校.','版權所有 @ 2018, 國立新竹奶龍工業職業學校.')
+s=s.replace('竹工雷霆捷報','奶龍工雷霆捷報')
+# 右下角固定台詞
+s=re.sub(r"const CL=\[[^\]]*\];","const CL=['喔哈哈哈哈哈哈'];",s,count=1)
 open(dst,'w',encoding='utf-8').write(s)
 print('ok', len(s))
