@@ -169,5 +169,87 @@ s=s.replace('版權所有 @ 2018, 國立新竹高級工業職業學校.','版權
 s=s.replace('竹工雷霆捷報','奶龍工雷霆捷報')
 # 右下角固定台詞
 s=re.sub(r"const CL=\[[^\]]*\];","const CL=['喔哈哈哈哈哈哈'];",s,count=1)
+# 已同意的回訪者：等整段 script 跑完（所有 const/let 都初始化）才進站，避免 TDZ
+R("if(sessionStorage.getItem('hcvs-naiwa-ok')==='1') enter();","")
+R("\n</script>\n</body>","\nif(sessionStorage.getItem('hcvs-naiwa-ok')==='1') enter();\n</script>\n</body>")
+# ---------- 手機體驗修正 ----------
+mobile_css="""
+/* 通用：不准任何東西把頁面撐寬 */
+html,body{max-width:100%;overflow-x:hidden}
+#nl-bg{width:100vw;max-width:100%}
+td.t{word-break:break-word;overflow-wrap:anywhere}
+table{table-layout:fixed}
+th.d,td.d{width:96px}
+th.u,td.u{width:110px}
+th.c,td.c{width:64px}
+#modal .hd{gap:12px}
+#modal .hd b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.35}
+#modal .hd button{flex:0 0 auto}
+@media(max-width:640px){
+  .wrap{padding-left:14px;padding-right:14px}
+  section{padding-top:44px;padding-bottom:44px}
+  .board{padding:14px;border-radius:16px}
+  /* 公告表：改卡片列，日期在上、標題在下 */
+  .board table,.board tbody,.board tr,.board td{display:block;width:auto}
+  .board thead{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+  .board thead tr{display:flex;gap:6px}
+  .board th{display:inline-block!important;border:1px solid var(--border);border-radius:999px;padding:6px 12px;font-size:13px;width:auto!important}
+  .board th.u,.board th.c{display:inline-block!important}
+  .board tr{padding:12px 2px;border-bottom:1px solid #f1e6c8}
+  .board td{border:0;padding:0}
+  .board td.d{font-size:12px;width:auto;margin-bottom:4px}
+  .board td.u,.board td.c{display:none}
+  .board td.t a{font-size:15px;line-height:1.5}
+  .filters{gap:10px}
+  .filters .btn{flex:1}
+  .tabs{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin-left:-14px;margin-right:-14px;padding:0 14px 4px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tabs button{flex:0 0 auto;padding:9px 16px}
+  .pager button{min-width:40px;height:40px}
+  .pager .info{width:100%;text-align:center;margin-top:6px}
+  .hero{min-height:0}
+  .hero .wrap{padding-top:40px;padding-bottom:70px}
+  .hero h1{font-size:27px;line-height:1.35;padding-right:110px}
+  .hero .kicker{font-size:12px}
+  .hero .cta{flex-wrap:wrap;gap:8px}
+  .hero .cta .btn{flex:1 1 auto;text-align:center;padding:11px 14px}
+  .hero .mascot{width:100px;top:18px}
+  .stats .wrap{gap:10px}
+  .stat small{font-size:12px}
+  .band{padding:24px;border-radius:20px}
+  .band .nl-big{width:150px;height:150px;right:-20px;bottom:-30px}
+  .band .row .btn{flex:1 1 auto;text-align:center}
+  /* 浮動角色縮小、不擋內容、不擋點擊 */
+  #nl-pet{width:52px;height:52px;left:8px;bottom:10px}
+  #corner{width:64px;right:4px}
+  #nl-pet .bubble,#corner .bubble{font-size:12px;padding:6px 10px}
+  #corner .bubble{right:90%}
+  #nl-bg img{opacity:.08}
+  /* 公告視窗：全螢幕 sheet */
+  #modal{padding:0;align-items:flex-end}
+  #modal .box{width:100%;max-height:92vh;height:92vh;border-radius:20px 20px 0 0}
+  #modal .hd{padding:12px 14px}
+  #modal .hd b{font-size:15px}
+  #modal .hd button{width:40px;height:40px;font-size:18px}
+  #modal .bd{padding:14px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .art-meta{font-size:12px;gap:4px 12px}
+  .art-body{font-size:15px}
+  .art-body iframe{min-height:50vh}
+  .art-foot{text-align:center}
+  .art-foot .btn{display:block}
+  /* 選單 */
+  .menu{top:64px;max-height:calc(100vh - 64px)}
+  .menu>li>button{width:100%;text-align:left;padding:14px 4px;font-size:16px}
+  .drop a{padding:10px 8px;display:block}
+}
+@media(max-width:380px){.hero h1{font-size:24px;padding-right:90px}.hero .mascot{width:84px}}
+/* 視窗開著時鎖住背景捲動 */
+body.modal-open{overflow:hidden}
+"""
+R("</style>",mobile_css+"</style>")
+R("function modal(title,html){$('#mt').textContent=title;$('#mb').innerHTML=html;$('#modal').classList.add('on');}",
+  "function modal(title,html){$('#mt').textContent=title;$('#mb').innerHTML=html;$('#modal').classList.add('on');document.body.classList.add('modal-open');}")
+R("$('#mx').onclick=()=>{$('#modal').classList.remove('on');$('#mb').innerHTML='';};",
+  "$('#mx').onclick=()=>{$('#modal').classList.remove('on');$('#mb').innerHTML='';document.body.classList.remove('modal-open');};")
 open(dst,'w',encoding='utf-8').write(s)
 print('ok', len(s))
