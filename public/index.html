@@ -515,13 +515,13 @@ async function openNews(nid,fallback,href){
   try{const r=await fetch('/api/show?nid='+nid);if(!r.ok)throw 0;const d=await r.json();
     $('#mt').textContent=d.title||fallback||'公告';
     const files=d.files.length?`<div class="art-files"><b>📎 附件（${d.files.length}）</b>${d.files.map(f=>`<a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.name)}<small>${fmtSize(f.size)}</small></a>`).join('')}</div>`:'';
-    $('#mb').innerHTML=`<div class="art"><div class="art-meta"><span>🏢 ${esc(d.unit)}</span><span>👤 ${esc(d.person)}</span><span>🕒 ${esc(d.time)}</span></div>${files}<div class="art-body">${sanitize(d.content)||'<p class="loading">'+NL+'這則公告只有標題，內文被奶龍吃了</p>'}</div><div class="art-foot"><a class="btn btn-o" href="${esc(href)}" target="_blank" rel="noopener">在學校官網開啟原文</a></div></div>`;
+    $('#mb').innerHTML=`<div class="art"><div class="art-meta"><span>🏢 ${esc(d.unit)}</span><span>👤 ${esc(d.person)}</span><span>🕒 ${esc(d.time)}</span></div>${files}<div class="art-body">${sanitize(d.content)||'<p class="loading">'+NL+'這則公告只有標題，內文被奶龍吃了</p>'}</div><div class="art-foot"><a data-raw="1" class="btn btn-o" href="${esc(href)}" target="_blank" rel="noopener">在學校官網開啟原文</a></div></div>`;
     $('#mb').scrollTop=0;
-  }catch(e){$('#mb').innerHTML='<div class="loading">'+NL+pickLine(FAIL)+`<br><br><a class="btn btn-y" href="${esc(href)}" target="_blank" rel="noopener">改去官網看</a></div>`;}
+  }catch(e){$('#mb').innerHTML='<div class="loading">'+NL+pickLine(FAIL)+`<br><br><a data-raw="1" class="btn btn-y" href="${esc(href)}" target="_blank" rel="noopener">改去官網看</a></div>`;}
 }
 document.addEventListener('click',e=>{
   const a=e.target.closest('a[href]');if(!a||e.ctrlKey||e.metaKey||e.shiftKey||e.button)return;
-  const m=a.href.match(NID_RE);if(!m)return;
+  if(a.dataset.raw)return;const m=a.href.match(NID_RE);if(!m)return;
   e.preventDefault();openNews(m[1],a.textContent.trim()||a.querySelector('img')?.alt||'',a.href);
 },true);
 
