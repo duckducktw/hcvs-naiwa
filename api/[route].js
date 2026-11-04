@@ -1,5 +1,6 @@
 // 新竹高工官網 奶龍風重製（非官方）— Vercel serverless：代理 ischool 公開 API（官方 API 無 CORS）
 import UNITS from '../lib/units.js';
+import { parsePage, parseShowPage } from '../lib/page.js';
 
 const ROOT = 'https://www.hcvs.hc.edu.tw/ischool/';
 const TAB_UID = 'WID_0_15_82ff8072601d6250aecc3ee4f26ac4a49b1d586a';
@@ -10,6 +11,10 @@ const UA = 'Mozilla/5.0 (X11; Linux x86_64) hcvs-naiwa-mirror';
 async function up(path, init = {}) {
   const r = await fetch(ROOT + path, { ...init, headers: { 'User-Agent': UA, Referer: 'https://www.hcvs.hc.edu.tw/home', ...(init.headers || {}) } });
   return { ok: r.ok, status: r.status, type: r.headers.get('content-type') || 'application/json; charset=utf-8', body: await r.text() };
+}
+async function upAbs(url) {
+  const r = await fetch(url, { headers: { 'User-Agent': UA, Referer: 'https://www.hcvs.hc.edu.tw/home' } });
+  return { ok: r.ok, status: r.status, type: r.headers.get('content-type') || 'text/html', body: await r.text() };
 }
 const form = p => ({ method: 'POST', body: p.toString(), headers: { 'content-type': 'application/x-www-form-urlencoded' } });
 
@@ -81,6 +86,47 @@ export default async function handler(req, res) {
       const r = await up('public/news_view/show.php?nid=' + nid);
       if (!r.ok) return send(r, 60);
       return send({ ok: true, body: JSON.stringify(parseShow(r.body, nid)) }, 600, 'application/json; charset=utf-8');
+    }
+    if (route === 'page') {
+      // bid=0 → 主站 /home?cid=（主站子頁）；其餘 → publish_page/<bid>/
+      const bid = int('bid', 0, 100000);
+      const cid = int('cid', 0, 10000000);
+      if (!bid && !cid) return res.status(400).send('bad bid');
+      const r = bid
+        ? await up(`publish_page/${bid}/` + (cid ? `?cid=${cid}` : ''))
+        : await upAbs('https://www.hcvs.hc.edu.tw/home?cid=' + cid);
+      if (!r.ok) return send(r, 60);
+      return send({ ok: true, body: JSON.stringify(parsePage(r.body, bid, cid)) }, 600, 'application/json; charset=utf-8');
+    }
+    if (route === 'unews') {
+      // 單位頁公佈欄：只接受 ischool widget uid 格式，固定回最新 8 則
+      const uid = q.get('uid') || '';
+      if (!/^WID_\d+_\d+_[0-9a-f]{40}$/.test(uid)) return res.status(400).send('bad uid');
+      const p = new URLSearchParams({ field: 'time', order: 'DESC', pageNum: 0, maxRows: 8, uid, tf: '1', auth_type: 'user', keyword: '' });
+      return send(await up('widget/site_news/news_query_json.php', form(p)), 300);
+    }
+    if (route === 'mshow') {
+      const id = int('id', 0, 10000000);
+      if (!id) return res.status(400).send('bad id');
+      const r = await up('widget/main_menu/show.php?id=' + id);
+      if (!r.ok) return send(r, 60);
+      return send({ ok: true, body: JSON.stringify(parseShowPage(r.body, id)) }, 600, 'application/json; charset=utf-8');
+    }
+    if (route === 'file') {
+      // 學校公開檔案代理（只收學校網域的檔案路徑），讓 PDF 能在站內預覽
+      let t;
+      try { t = new URL(q.get('u') || ''); } catch { return res.status(400).send('bad url'); }
+      const okPath = /^\/(resource\/openfid\.php|ischool\/news\/attached\/\d+\/|ischool\/resources\/WID_)/.test(t.pathname);
+      if (t.protocol !== 'https:' || t.hostname !== 'www.hcvs.hc.edu.tw' || !okPath) return res.status(400).send('bad url');
+      const r = await fetch(t.href, { headers: { 'User-Agent': UA, Referer: 'https://www.hcvs.hc.edu.tw/home' } });
+      const type = r.headers.get('content-type') || 'application/octet-stream';
+      if (!r.ok || !/^(application\/pdf|image\/)/.test(type)) return res.status(415).send('not previewable');
+      const buf = Buffer.from(await r.arrayBuffer());
+      if (buf.length > 4.3 * 1024 * 1024) return res.status(413).send('too large');
+      res.setHeader('content-type', type);
+      res.setHeader('content-disposition', 'inline');
+      res.setHeader('cache-control', 'public, s-maxage=86400');
+      return res.status(200).send(buf);
     }
     if (route === 'carousel') {
       return send(await up('widget/carousel/news_query_json_field.php', form(new URLSearchParams({ uid: CAROUSEL_UID }))), 3600);

@@ -251,5 +251,12 @@ R("function modal(title,html){$('#mt').textContent=title;$('#mb').innerHTML=html
   "function modal(title,html){$('#mt').textContent=title;$('#mb').innerHTML=html;$('#modal').classList.add('on');document.body.classList.add('modal-open');}")
 R("$('#mx').onclick=()=>{$('#modal').classList.remove('on');$('#mb').innerHTML='';};",
   "$('#mx').onclick=()=>{$('#modal').classList.remove('on');$('#mb').innerHTML='';document.body.classList.remove('modal-open');};")
+# ---------- 單位頁 / 內容頁 站內顯示 ----------
+import os as _os
+_d=_os.path.dirname(_os.path.abspath(__file__))
+pp_css=open(_os.path.join(_d,'pp_viewer.css'),encoding='utf-8').read()
+pp_js=open(_os.path.join(_d,'pp_viewer.js'),encoding='utf-8').read()
+R("</style>",pp_css+"</style>")
+R("\nif(sessionStorage.getItem('hcvs-naiwa-ok')==='1') enter();\n</script>","\n"+pp_js+"\nif(sessionStorage.getItem('hcvs-naiwa-ok')==='1') enter();\n</script>")
 open(dst,'w',encoding='utf-8').write(s)
 print('ok', len(s))
