@@ -2,6 +2,7 @@
 import UNITS from '../lib/units.js';
 import { parsePage, parseShowPage } from '../lib/page.js';
 import * as CT from '../lib/classtable.js';
+import * as PUB from '../lib/publicpages.js';
 
 const ROOT = 'https://www.hcvs.hc.edu.tw/ischool/';
 const TAB_UID = 'WID_0_15_82ff8072601d6250aecc3ee4f26ac4a49b1d586a';
@@ -145,6 +146,17 @@ export default async function handler(req, res) {
         return json(await CT.timetable(type, no, yt[0], yt[1]), 21600);
       }
       return res.status(400).send('bad op');
+    }
+    if (route === 'alumni') {
+      const d = await PUB.alumni();
+      return send({ ok: true, body: JSON.stringify(d) }, 21600, 'application/json; charset=utf-8', 604800);
+    }
+    if (route === 'phone') {
+      const d = await PUB.phonePdf();
+      res.setHeader('content-type', d.type);
+      res.setHeader('content-disposition', 'inline; filename="hcvs-phone.pdf"');
+      res.setHeader('cache-control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800');
+      return res.status(200).send(d.buf);
     }
     if (route === 'carousel') {
       return send(await up('widget/carousel/news_query_json_field.php', form(new URLSearchParams({ uid: CAROUSEL_UID }))), 3600);

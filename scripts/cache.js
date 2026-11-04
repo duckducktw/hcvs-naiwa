@@ -8,7 +8,7 @@
   const NS='hcvs-naiwa-c1:';
   // 各端點新鮮度（毫秒）：公告變動快，課表/單位頁慢
   const TTL=[[/^\/api\/news/,3*60e3],[/^\/api\/unews/,5*60e3],[/^\/api\/(tab|tabc|carousel)/,15*60e3],
-             [/^\/api\/(show|page|mshow)/,30*60e3],[/^\/api\/ct/,6*3600e3],[/^\/api\/file/,24*3600e3]];
+             [/^\/api\/(show|page|mshow|alumni)/,30*60e3],[/^\/api\/ct/,6*3600e3],[/^\/api\/file/,24*3600e3]];
   const MAXAGE=7*24*3600e3; // 超過 7 天的舊資料不拿來先頂
   const ttlOf=p=>{for(const[r,t]of TTL)if(r.test(p))return t;return 0;};
   const orig=window.fetch.bind(window);

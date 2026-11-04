@@ -1,0 +1,18 @@
+/* 傑出校友 */
+.al-bar{display:flex;gap:10px;position:sticky;top:0;z-index:2;background:var(--card);padding:0 0 14px}
+.al-bar select,.al-bar input{border:2px solid var(--border);border-radius:12px;padding:9px 12px;font:inherit;background:#fff}
+.al-bar input{flex:1;min-width:0}
+.al-count{color:var(--mfg);font-size:13px;margin:0 0 10px}
+.al-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.al-card{display:grid;grid-template-columns:90px 1fr;gap:14px;border:1px solid var(--border);border-radius:16px;padding:14px;background:var(--muted)}
+.al-card>img{width:90px;height:110px;object-fit:cover;border-radius:12px;background:#fff}
+.al-card h3{font:700 22px var(--serif);margin:2px 0}
+.al-card p{font-size:13px;line-height:1.55;margin:5px 0}
+.al-year{font-size:12px;color:var(--accent);font-weight:700}
+.al-meta{color:var(--mfg)}
+.al-card details{margin-top:8px}
+.al-card summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--accent)}
+@media(max-width:700px){.al-grid{grid-template-columns:1fr}.al-bar{flex-direction:column}.al-card{grid-template-columns:64px 1fr}.al-card>img{width:64px;height:80px}.al-card h3{font-size:19px}}
+
+.phonev>img{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:12px;background:#fff}
+.phonev .art-foot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}

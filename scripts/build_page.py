@@ -258,11 +258,13 @@ pp_css=open(_os.path.join(_d,'pp_viewer.css'),encoding='utf-8').read()
 pp_js=open(_os.path.join(_d,'pp_viewer.js'),encoding='utf-8').read()
 ct_css=open(_os.path.join(_d,'ct_viewer.css'),encoding='utf-8').read()
 ct_js=open(_os.path.join(_d,'ct_viewer.js'),encoding='utf-8').read()
+public_css=open(_os.path.join(_d,'public_viewer.css'),encoding='utf-8').read()
+public_js=open(_os.path.join(_d,'public_viewer.js'),encoding='utf-8').read()
 cache_js=open(_os.path.join(_d,'cache.js'),encoding='utf-8').read()
-R("</style>",pp_css+ct_css+"</style>")
+R("</style>",pp_css+ct_css+public_css+"</style>")
 i_s=s.rfind('<script>')
 s=s[:i_s+8]+'\n'+cache_js+'\n'+s[i_s+8:]
-R("\nif(sessionStorage.getItem('hcvs-naiwa-ok')==='1') enter();\n</script>","\n"+pp_js+"\n"+ct_js+"\nif(sessionStorage.getItem('hcvs-naiwa-ok')==='1') enter();\n</script>")
+R("\nif(sessionStorage.getItem('hcvs-naiwa-ok')==='1') enter();\n</script>","\n"+public_js+"\n"+pp_js+"\n"+ct_js+"\nif(sessionStorage.getItem('hcvs-naiwa-ok')==='1') enter();\n</script>")
 # ---------- SEO：開放收錄（明示非官方，避免被當成學校官網）----------
 SEO_HEAD = """<meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="description" content="【非官方・玩梗站】奶龍風格重製的新竹高工官網外觀，資料即時取自學校公開網站。公告、單位頁、課表免登入查詢。所有內容請以學校官網 www.hcvs.hc.edu.tw 為準。">

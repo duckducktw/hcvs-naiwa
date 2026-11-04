@@ -435,6 +435,24 @@ body.modal-open{overflow:hidden}
   .ct-c b{font-size:12px}
 }
 .ct-c.none{opacity:.35;border-left-color:#ccc;box-shadow:none}
+/* 傑出校友 */
+.al-bar{display:flex;gap:10px;position:sticky;top:0;z-index:2;background:var(--card);padding:0 0 14px}
+.al-bar select,.al-bar input{border:2px solid var(--border);border-radius:12px;padding:9px 12px;font:inherit;background:#fff}
+.al-bar input{flex:1;min-width:0}
+.al-count{color:var(--mfg);font-size:13px;margin:0 0 10px}
+.al-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.al-card{display:grid;grid-template-columns:90px 1fr;gap:14px;border:1px solid var(--border);border-radius:16px;padding:14px;background:var(--muted)}
+.al-card>img{width:90px;height:110px;object-fit:cover;border-radius:12px;background:#fff}
+.al-card h3{font:700 22px var(--serif);margin:2px 0}
+.al-card p{font-size:13px;line-height:1.55;margin:5px 0}
+.al-year{font-size:12px;color:var(--accent);font-weight:700}
+.al-meta{color:var(--mfg)}
+.al-card details{margin-top:8px}
+.al-card summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--accent)}
+@media(max-width:700px){.al-grid{grid-template-columns:1fr}.al-bar{flex-direction:column}.al-card{grid-template-columns:64px 1fr}.al-card>img{width:64px;height:80px}.al-card h3{font-size:19px}}
+
+.phonev>img{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:12px;background:#fff}
+.phonev .art-foot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 </style>
 </head>
 <body class="locked">
@@ -574,7 +592,7 @@ body.modal-open{overflow:hidden}
   const NS='hcvs-naiwa-c1:';
   // 各端點新鮮度（毫秒）：公告變動快，課表/單位頁慢
   const TTL=[[/^\/api\/news/,3*60e3],[/^\/api\/unews/,5*60e3],[/^\/api\/(tab|tabc|carousel)/,15*60e3],
-             [/^\/api\/(show|page|mshow)/,30*60e3],[/^\/api\/ct/,6*3600e3],[/^\/api\/file/,24*3600e3]];
+             [/^\/api\/(show|page|mshow|alumni)/,30*60e3],[/^\/api\/ct/,6*3600e3],[/^\/api\/file/,24*3600e3]];
   const MAXAGE=7*24*3600e3; // 超過 7 天的舊資料不拿來先頂
   const ttlOf=p=>{for(const[r,t]of TTL)if(r.test(p))return t;return 0;};
   const orig=window.fetch.bind(window);
@@ -827,6 +845,32 @@ function pager(){const t=NS.total,p=NS.page;if(t<=1){$('#npager').innerHTML='';r
   for(let i=s;i<e;i++)h+=`<button data-p="${i}" class="${i===p?'on':''}">${i+1}</button>`;
   h+=`<button data-p="${p+1}" ${p<t-1?'':'disabled'}>›</button><button data-p="${t-1}" ${p<t-1?'':'disabled'}>»</button><span class="info">第 ${p+1} / ${t} 頁</span>`;
   $('#npager').innerHTML=h;$('#npager').querySelectorAll('button[data-p]').forEach(b=>b.onclick=()=>{NS.page=+b.dataset.p;loadNews();$('#news').scrollIntoView();});}
+/* ===== 指定公開頁免登入：行事曆 / 分機 / 傑出校友 ===== */
+const ALUMNI_RE=/script\.google\.com\/(?:a\/macros\/[^/]+|macros)\/s\/AKfycbzaskfvcZkDUUfFXj3vlphbsrJfbHTeWdQyFk94OtlPWcGaUeQaogx7dCeM-h19TcC9\/exec/;
+function openPhone(href){
+ modal('☎️ 處室分機',`<div class="phonev"><img src="/img/phone.webp?v=1" alt="新竹高工處室分機一覽表"><div class="art-foot"><a data-raw="1" class="btn btn-o" href="/api/phone" target="_blank" rel="noopener">下載原 PDF</a><a data-raw="1" class="btn btn-o" href="${esc(href)}" target="_blank" rel="noopener">學校原頁</a></div></div>`);
+}
+async function openAlumni(href){
+ modal('🏆 歷屆傑出校友','<div class="loading">'+NL+pickLine(LOADING)+'</div>');
+ try{const r=await fetch('/api/alumni');if(!r.ok)throw 0;const d=await r.json();
+  const years=[...new Set(d.data.map(x=>String(x['獲獎年度'])))].sort((a,b)=>b-a);
+  $('#mb').innerHTML=`<div class="al">
+   <div class="al-bar"><select id="al-y"><option value="">全部年度（${d.data.length}）</option>${years.map(y=>`<option>${y}</option>`).join('')}</select><input id="al-q" placeholder="搜尋姓名、科別、經歷"></div>
+   <div id="al-list"></div>
+   <div class="art-foot"><a data-raw="1" class="btn btn-o" href="${esc(href)}" target="_blank" rel="noopener">在學校原系統開啟</a></div>
+  </div>`;
+  const draw=()=>{const y=$('#al-y').value,q=$('#al-q').value.trim().toLowerCase();const rows=d.data.filter(x=>(!y||String(x['獲獎年度'])===y)&&(!q||Object.values(x).join(' ').toLowerCase().includes(q)));
+   $('#al-list').innerHTML=`<p class="al-count">顯示 ${rows.length} 位</p><div class="al-grid">${rows.map(x=>{const m=String(x['照片']||'').match(/\/d\/([^/]+)/);const img=m?`https://lh3.googleusercontent.com/d/${m[1]}=h160`:'';return `<article class="al-card">${img?`<img src="${img}" alt="${esc(x['姓名'])}" loading="lazy" referrerpolicy="no-referrer">`:''}<div><span class="al-year">${esc(x['獲獎年度'])} 年度 · 第 ${esc(x['編號'])} 號</span><h3>${esc(x['姓名'])}</h3><p class="al-meta">${esc(x['級別'])} 級 · ${esc(x['科別'])}</p><p><b>經歷：</b>${esc(x['經歷']||'—')}</p><details><summary>傑出事蹟</summary><p>${esc(x['傑出/優秀事蹟']||'—')}</p></details></div></article>`;}).join('')}</div>`;};
+  $('#al-y').onchange=draw;$('#al-q').oninput=draw;draw();
+ }catch(e){$('#mb').innerHTML=`<div class="loading">${NL}${pickLine(FAIL)}<br><br><a data-raw="1" class="btn btn-y" href="${esc(href)}" target="_blank" rel="noopener">改去原系統看</a></div>`;}
+}
+// 比一般 publish_page 攔截更早處理（capture listener 註冊於其後，stopImmediatePropagation 防重複）
+document.addEventListener('click',e=>{
+ const a=e.target.closest('a[href]');if(!a||e.ctrlKey||e.metaKey||e.shiftKey||e.button||a.dataset.raw)return;
+ if(/publish_page\/87\/?\?cid=1589/.test(a.href)){e.preventDefault();e.stopImmediatePropagation();openPhone(a.href);return;}
+ if(ALUMNI_RE.test(a.href)){e.preventDefault();e.stopImmediatePropagation();openAlumni(a.href);}
+},true);
+
 /* ===== 單位頁 / 內容頁 站內原生顯示 ===== */
 const PP_RE=/\/ischool\/publish_page\/(\d+)\/?(?:\?cid=(\d+))?(?:$|[&#])/;
 const HOME_RE=/^https:\/\/www\.hcvs\.hc\.edu\.tw\/home\?cid=(\d+)$/;
@@ -846,7 +890,7 @@ async function openPage(bid,cid,fallback,href){
     const subs=d.subpages.length?`<div class="pp-subs">${d.subpages.map(l=>ppLink(l)).join('')}</div>`:'';
     let body=d.content?`<div class="art-body">${sanitize(d.content)}</div>`:'';
     if(d.gone)body=`<p class="pp-hint">${NL}這個頁面已經不存在了，奶龍去找也找不到</p>`;
-    else if(!body&&!subs)body=`<p class="pp-hint">${NL}${d.menu.length?'左邊（手機是上面）選一個看看，奶龍幫你翻':'這頁學校沒放內容，奶龍也沒辦法'}</p>`;
+    else if(!body&&!subs&&!d.newsUid)body=`<p class="pp-hint">${NL}${d.menu.length?'左邊（手機是上面）選一個看看，奶龍幫你翻':'這頁學校沒放內容，奶龍也沒辦法'}</p>`;
     const news=d.newsUid?`<div class="pp-news"><b>📢 ${esc(d.site)} 公佈欄</b><div id="ppnews" data-uid="${esc(d.newsUid)}"><div class="loading">${NL}${pickLine(LOADING)}</div></div></div>`:'';
     $('#mb').innerHTML=`<div class="pp">${menu}<div class="pp-main">${crumbs}${subs}${body}${news}<div class="art-foot"><a data-raw="1" class="btn btn-o" href="${esc(href)}" target="_blank" rel="noopener">在學校官網開啟原頁</a></div></div></div>`;
     $('#mb').scrollTop=0;

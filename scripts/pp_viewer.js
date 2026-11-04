@@ -17,7 +17,7 @@ async function openPage(bid,cid,fallback,href){
     const subs=d.subpages.length?`<div class="pp-subs">${d.subpages.map(l=>ppLink(l)).join('')}</div>`:'';
     let body=d.content?`<div class="art-body">${sanitize(d.content)}</div>`:'';
     if(d.gone)body=`<p class="pp-hint">${NL}這個頁面已經不存在了，奶龍去找也找不到</p>`;
-    else if(!body&&!subs)body=`<p class="pp-hint">${NL}${d.menu.length?'左邊（手機是上面）選一個看看，奶龍幫你翻':'這頁學校沒放內容，奶龍也沒辦法'}</p>`;
+    else if(!body&&!subs&&!d.newsUid)body=`<p class="pp-hint">${NL}${d.menu.length?'左邊（手機是上面）選一個看看，奶龍幫你翻':'這頁學校沒放內容，奶龍也沒辦法'}</p>`;
     const news=d.newsUid?`<div class="pp-news"><b>📢 ${esc(d.site)} 公佈欄</b><div id="ppnews" data-uid="${esc(d.newsUid)}"><div class="loading">${NL}${pickLine(LOADING)}</div></div></div>`:'';
     $('#mb').innerHTML=`<div class="pp">${menu}<div class="pp-main">${crumbs}${subs}${body}${news}<div class="art-foot"><a data-raw="1" class="btn btn-o" href="${esc(href)}" target="_blank" rel="noopener">在學校官網開啟原頁</a></div></div></div>`;
     $('#mb').scrollTop=0;
