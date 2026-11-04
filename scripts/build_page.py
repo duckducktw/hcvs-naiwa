@@ -1,4 +1,4 @@
-import re, json
+import re, json, os
 src='/home/user/Data/Dev/cf/hcvs-naiwa/index.html'
 dst='/home/user/Data/Dev/cf/hcvs-naiwa-vercel/public/index.html'
 s=open(src,encoding='utf-8').read()
@@ -284,7 +284,8 @@ SEO_HEAD = """<meta name="robots" content="index,follow,max-image-preview:large"
   "inLanguage": "zh-Hant",
   "description": "非官方、純玩梗的新竹高工官網奶龍風格重製；資料來自學校公開網站，內容以學校官網為準。"
 }, ensure_ascii=False) + """</script>"""
-s = s.replace('<meta name="robots" content="noindex,nofollow">', SEO_HEAD, 1)
+GSC_META = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'gsc_meta.txt'), encoding='utf-8').read().strip()
+s = s.replace('<meta name="robots" content="noindex,nofollow">', GSC_META + '\n' + SEO_HEAD, 1)
 s = s.replace('<title>國立新竹奶龍工業職業學校（非官方奶龍雷霆重製）</title>',
               '<title>國立新竹奶龍工業職業學校｜非官方玩梗站（新竹高工奶龍重製）</title>', 1)
 assert 'noindex' not in s, 'noindex still present'
