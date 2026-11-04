@@ -57,7 +57,7 @@ export default async function handler(req, res) {
   const q = u.searchParams;
   const route = u.pathname.replace(/^\/api\//, '');
   const int = (k, d, max) => { const n = parseInt(q.get(k) ?? d, 10); return isNaN(n) ? d : Math.max(0, Math.min(n, max)); };
-  const send = (r, ttl, type) => { res.setHeader('content-type', type || r.type); res.setHeader('cache-control', `public, s-maxage=${ttl}, stale-while-revalidate=${ttl * 5}`); res.status(r.ok === false ? 502 : 200).send(r.body); };
+  const send = (r, ttl, type, swr) => { res.setHeader('content-type', type || r.type); res.setHeader('cache-control', `public, s-maxage=${ttl}, stale-while-revalidate=${swr || ttl * 5}`); res.status(r.ok === false ? 502 : 200).send(r.body); };
   try {
     if (route === 'news') {
       const uid = q.get('uid');
@@ -134,14 +134,14 @@ export default async function handler(req, res) {
       const op = q.get('op');
       const type = ['Class', 'Teacher', 'Classroom'].includes(q.get('type')) ? q.get('type') : '';
       const yt = /^\d{2,3}_[12]$/.test(q.get('yt') || '') ? q.get('yt').split('_') : null;
-      const json = (o, ttl) => send({ ok: true, body: JSON.stringify(o) }, ttl, 'application/json; charset=utf-8');
-      if (op === 'terms') return json(await CT.terms(), 3600);
+      const json = (o, ttl) => send({ ok: true, body: JSON.stringify(o) }, ttl, 'application/json; charset=utf-8', 604800);
+      if (op === 'terms') return json(await CT.terms(), 21600);
       if (!type || !yt) return res.status(400).send('bad params');
-      if (op === 'options') return json(await CT.options(type, yt[0], yt[1]), 3600);
+      if (op === 'options') return json(await CT.options(type, yt[0], yt[1]), 21600);
       if (op === 'table') {
         const no = q.get('no') || '';
         if (!/^[A-Za-z0-9]{1,8}$/.test(no)) return res.status(400).send('bad no');
-        return json(await CT.timetable(type, no, yt[0], yt[1]), 1800);
+        return json(await CT.timetable(type, no, yt[0], yt[1]), 21600);
       }
       return res.status(400).send('bad op');
     }
