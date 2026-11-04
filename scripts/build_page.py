@@ -326,6 +326,9 @@ assert 'noindex' not in s, 'noindex still present'
 img_fix_css="""
 .art-body img:not(.an1):not([data-emoji]){width:auto!important;height:auto!important;max-width:100%!important;object-fit:contain!important}
 .art-body img.an1,.art-body img[data-emoji]{max-width:none!important;border-radius:0}
+/* Excel 貼入的榜單不是圖片，是寬表格；不可套全站 fixed layout 硬壓成手機寬 */
+.art-body table{table-layout:auto!important;width:max-content!important;min-width:100%!important;max-width:none!important;display:table!important;overflow:visible!important}
+.art-body{overflow-x:auto;-webkit-overflow-scrolling:touch}
 """
 R("</style>",img_fix_css+"</style>")
 open(dst,'w',encoding='utf-8').write(s)
