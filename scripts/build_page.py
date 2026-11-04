@@ -1,4 +1,4 @@
-import re
+import re, json
 src='/home/user/Data/Dev/cf/hcvs-naiwa/index.html'
 dst='/home/user/Data/Dev/cf/hcvs-naiwa-vercel/public/index.html'
 s=open(src,encoding='utf-8').read()
@@ -263,5 +263,30 @@ R("</style>",pp_css+ct_css+"</style>")
 i_s=s.rfind('<script>')
 s=s[:i_s+8]+'\n'+cache_js+'\n'+s[i_s+8:]
 R("\nif(sessionStorage.getItem('hcvs-naiwa-ok')==='1') enter();\n</script>","\n"+pp_js+"\n"+ct_js+"\nif(sessionStorage.getItem('hcvs-naiwa-ok')==='1') enter();\n</script>")
+# ---------- SEO：開放收錄（明示非官方，避免被當成學校官網）----------
+SEO_HEAD = """<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="description" content="【非官方・玩梗站】奶龍風格重製的新竹高工官網外觀，資料即時取自學校公開網站。公告、單位頁、課表免登入查詢。所有內容請以學校官網 www.hcvs.hc.edu.tw 為準。">
+<link rel="canonical" href="https://hcvs.gdtw.qzz.io/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="國立新竹奶龍工業職業學校（非官方）">
+<meta property="og:title" content="國立新竹奶龍工業職業學校｜非官方玩梗站">
+<meta property="og:description" content="奶龍風格重製的新竹高工官網外觀（非官方）。公告、單位頁、課表免登入。內容以學校官網為準。">
+<meta property="og:url" content="https://hcvs.gdtw.qzz.io/">
+<meta property="og:image" content="https://hcvs.gdtw.qzz.io/img/nl0.webp">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary">
+<script type="application/ld+json">""" + json.dumps({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "國立新竹奶龍工業職業學校（非官方玩梗站）",
+  "alternateName": "奶龍工",
+  "url": "https://hcvs.gdtw.qzz.io/",
+  "inLanguage": "zh-Hant",
+  "description": "非官方、純玩梗的新竹高工官網奶龍風格重製；資料來自學校公開網站，內容以學校官網為準。"
+}, ensure_ascii=False) + """</script>"""
+s = s.replace('<meta name="robots" content="noindex,nofollow">', SEO_HEAD, 1)
+s = s.replace('<title>國立新竹奶龍工業職業學校（非官方奶龍雷霆重製）</title>',
+              '<title>國立新竹奶龍工業職業學校｜非官方玩梗站（新竹高工奶龍重製）</title>', 1)
+assert 'noindex' not in s, 'noindex still present'
 open(dst,'w',encoding='utf-8').write(s)
 print('ok', len(s))
