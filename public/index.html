@@ -453,6 +453,9 @@ body.modal-open{overflow:hidden}
 
 .phonev>img{display:block;width:100%;height:auto;border:1px solid var(--border);border-radius:12px;background:#fff}
 .phonev .art-foot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+
+.art-body img:not(.an1):not([data-emoji]){width:auto!important;height:auto!important;max-width:100%!important;object-fit:contain!important}
+.art-body img.an1,.art-body img[data-emoji]{max-width:none!important;border-radius:0}
 </style>
 </head>
 <body class="locked">

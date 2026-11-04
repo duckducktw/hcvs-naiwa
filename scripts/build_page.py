@@ -321,5 +321,12 @@ s = s.replace('<meta name="robots" content="noindex,nofollow">', GSC_META + '\n'
 s = s.replace('<title>國立新竹奶龍工業職業學校（非官方奶龍雷霆重製）</title>',
               '<title>國立新竹奶龍工業職業學校｜非官方玩梗站（新竹高工奶龍重製）</title>', 1)
 assert 'noindex' not in s, 'noindex still present'
+# 公告一般圖片：來源常用 inline style 寫死寬高；手機只縮寬會把圖片壓成細長。
+# emoji / 小圖示保留原尺寸，其他圖片強制等比例縮放。
+img_fix_css="""
+.art-body img:not(.an1):not([data-emoji]){width:auto!important;height:auto!important;max-width:100%!important;object-fit:contain!important}
+.art-body img.an1,.art-body img[data-emoji]{max-width:none!important;border-radius:0}
+"""
+R("</style>",img_fix_css+"</style>")
 open(dst,'w',encoding='utf-8').write(s)
 print('ok', len(s))
