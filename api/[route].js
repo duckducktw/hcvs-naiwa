@@ -57,7 +57,8 @@ export default async function handler(req, res) {
   const q = u.searchParams;
   const route = u.pathname.replace(/^\/api\//, '');
   const int = (k, d, max) => { const n = parseInt(q.get(k) ?? d, 10); return isNaN(n) ? d : Math.max(0, Math.min(n, max)); };
-  const send = (r, ttl, type, swr) => { res.setHeader('content-type', type || r.type); res.setHeader('cache-control', `public, s-maxage=${ttl}, stale-while-revalidate=${swr || ttl * 5}`); res.status(r.ok === false ? 502 : 200).send(r.body); };
+  // CDN 快取 ttl 秒；過期後一天內先回舊的、背景更新；瀏覽器端快取交給前端 cache.js
+  const send = (r, ttl, type, swr) => { res.setHeader('content-type', type || r.type); res.setHeader('cache-control', `public, max-age=0, s-maxage=${ttl}, stale-while-revalidate=${swr || 86400}`); if (r.ok === false) res.setHeader('cache-control', 'no-store'); res.status(r.ok === false ? 502 : 200).send(r.body); };
   try {
     if (route === 'news') {
       const uid = q.get('uid');
@@ -86,7 +87,7 @@ export default async function handler(req, res) {
       if (!nid) return res.status(400).send('bad nid');
       const r = await up('public/news_view/show.php?nid=' + nid);
       if (!r.ok) return send(r, 60);
-      return send({ ok: true, body: JSON.stringify(parseShow(r.body, nid)) }, 600, 'application/json; charset=utf-8');
+      return send({ ok: true, body: JSON.stringify(parseShow(r.body, nid)) }, 3600, 'application/json; charset=utf-8');
     }
     if (route === 'page') {
       // bid=0 → 主站 /home?cid=（主站子頁）；其餘 → publish_page/<bid>/
@@ -97,7 +98,7 @@ export default async function handler(req, res) {
         ? await up(`publish_page/${bid}/` + (cid ? `?cid=${cid}` : ''))
         : await upAbs('https://www.hcvs.hc.edu.tw/home?cid=' + cid);
       if (!r.ok) return send(r, 60);
-      return send({ ok: true, body: JSON.stringify(parsePage(r.body, bid, cid)) }, 600, 'application/json; charset=utf-8');
+      return send({ ok: true, body: JSON.stringify(parsePage(r.body, bid, cid)) }, 3600, 'application/json; charset=utf-8');
     }
     if (route === 'unews') {
       // 單位頁公佈欄：只接受 ischool widget uid 格式，固定回最新 8 則
@@ -111,7 +112,7 @@ export default async function handler(req, res) {
       if (!id) return res.status(400).send('bad id');
       const r = await up('widget/main_menu/show.php?id=' + id);
       if (!r.ok) return send(r, 60);
-      return send({ ok: true, body: JSON.stringify(parseShowPage(r.body, id)) }, 600, 'application/json; charset=utf-8');
+      return send({ ok: true, body: JSON.stringify(parseShowPage(r.body, id)) }, 3600, 'application/json; charset=utf-8');
     }
     if (route === 'file') {
       // 學校公開檔案代理（只收學校網域的檔案路徑），讓 PDF 能在站內預覽
@@ -126,7 +127,7 @@ export default async function handler(req, res) {
       if (buf.length > 4.3 * 1024 * 1024) return res.status(413).send('too large');
       res.setHeader('content-type', type);
       res.setHeader('content-disposition', 'inline');
-      res.setHeader('cache-control', 'public, s-maxage=86400');
+      res.setHeader('cache-control', 'public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800');
       return res.status(200).send(buf);
     }
     if (route === 'ct') {

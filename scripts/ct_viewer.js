@@ -3,18 +3,11 @@ const CT_TYPES=[['Class','班級'],['Teacher','教師'],['Classroom','教室']];
 const CT_KEY='hcvs-naiwa-ct';
 let ctState={yt:'',type:'Class',no:'',opts:{}};
 function ctSaved(){try{return JSON.parse(localStorage.getItem(CT_KEY)||'{}')}catch(e){return{}}}
-const CT_CACHE='hcvs-naiwa-ctc:',CT_TTL=6*3600e3;
-function ctCacheGet(qs){try{const x=JSON.parse(localStorage.getItem(CT_CACHE+qs)||'null');return x&&x.d?x:null}catch(e){return null}}
-function ctCachePut(qs,d){try{localStorage.setItem(CT_CACHE+qs,JSON.stringify({t:Date.now(),d}))}catch(e){
-  // 滿了就清掉舊的課表快取再試一次
-  Object.keys(localStorage).filter(k=>k.startsWith(CT_CACHE)).forEach(k=>localStorage.removeItem(k));
-  try{localStorage.setItem(CT_CACHE+qs,JSON.stringify({t:Date.now(),d}))}catch(e2){}}}
-async function ctFetch(qs){const r=await fetch('/api/ct?'+qs);if(!r.ok)throw r.status;const d=await r.json();ctCachePut(qs,d);return d;}
-// 有快取：新鮮的直接回；過期的先回舊資料，背景更新（onFresh 收到新資料再重畫）
+// 快取交給全站快取層（scripts/cache.js）；這裡只負責「背景拿到新資料時重畫」
 async function ctJSON(qs,onFresh){
-  const c=ctCacheGet(qs);
-  if(c){if(Date.now()-c.t>CT_TTL)ctFetch(qs).then(d=>{if(onFresh&&JSON.stringify(d)!==JSON.stringify(c.d))onFresh(d)}).catch(()=>{});return c.d;}
-  return ctFetch(qs);
+  const key='/api/ct?'+qs;
+  if(onFresh){const h=e=>{if(e.detail.key===key){try{onFresh(JSON.parse(e.detail.body))}catch(x){}}};window.addEventListener('naiwa-fresh',h);setTimeout(()=>window.removeEventListener('naiwa-fresh',h),60e3);}
+  const r=await fetch(key);if(!r.ok)throw r.status;return r.json();
 }
 async function openClassTable(href){
   modal('📅 課表查詢（免登入）','<div class="loading">'+NL+pickLine(LOADING)+'</div>');

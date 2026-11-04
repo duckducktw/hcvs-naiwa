@@ -50,7 +50,7 @@ with sync_playwright() as p:
         import time; t0 = time.time()
         pg.evaluate("document.querySelector('a[href*=\"str=classtable\"]').dispatchEvent(new MouseEvent('click',{bubbles:true,cancelable:true}))")
         pg.wait_for_selector('.ct-head', timeout=30000)
-        print(label, f'reopen {time.time()-t0:.2f}s api calls: {len(reqs)}', 'cache keys:', pg.evaluate("Object.keys(localStorage).filter(k=>k.startsWith('hcvs-naiwa-ctc:')).length"))
+        print(label, f'reopen {time.time()-t0:.2f}s api calls: {len(reqs)}', 'cache keys:', pg.evaluate("Object.keys(localStorage).filter(k=>k.startsWith('hcvs-naiwa-c1:/api/ct')).length"))
         print(label, 'new tabs:', len(ctx.pages) - before, 'errors:', errs)
         ctx.close()
     b.close()
