@@ -331,5 +331,13 @@ img_fix_css="""
 .art-body{overflow-x:auto;-webkit-overflow-scrolling:touch}
 """
 R("</style>",img_fix_css+"</style>")
+# 對話框不能繼承主視覺 bubble 的 top/left，否則四邊同時定位會拉壞尺寸。
+bubble_fix_css='''
+#corner .bubble{top:auto;left:auto;right:calc(100% + 10px);bottom:60%;width:max-content;max-width:min(220px,calc(100vw - 100px));height:auto;white-space:normal;overflow-wrap:anywhere;line-height:1.5;background:#fff8e1;color:#1a1a2e;border:2px solid #1a1a2e;box-sizing:border-box}
+#corner .bubble::after{inset:auto;left:100%;top:50%;width:0;height:0;border:8px solid transparent;border-left-color:#1a1a2e;transform:translateY(-50%)}
+#nl-pet .bubble{white-space:normal;width:max-content;max-width:min(220px,calc(100vw - 90px));height:auto;overflow-wrap:anywhere;line-height:1.5;box-sizing:border-box}
+'''
+R('</style>',bubble_fix_css+'</style>')
+s=s.replace('/img/corner.webp?v=1','/img/corner.webp?v=2')
 open(dst,'w',encoding='utf-8').write(s)
 print('ok', len(s))

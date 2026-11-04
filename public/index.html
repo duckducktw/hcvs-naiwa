@@ -459,6 +459,10 @@ body.modal-open{overflow:hidden}
 /* Excel 貼入的榜單不是圖片，是寬表格；不可套全站 fixed layout 硬壓成手機寬 */
 .art-body table{table-layout:auto!important;width:max-content!important;min-width:100%!important;max-width:none!important;display:table!important;overflow:visible!important}
 .art-body{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+#corner .bubble{top:auto;left:auto;right:calc(100% + 10px);bottom:60%;width:max-content;max-width:min(220px,calc(100vw - 100px));height:auto;white-space:normal;overflow-wrap:anywhere;line-height:1.5;background:#fff8e1;color:#1a1a2e;border:2px solid #1a1a2e;box-sizing:border-box}
+#corner .bubble::after{inset:auto;left:100%;top:50%;width:0;height:0;border:8px solid transparent;border-left-color:#1a1a2e;transform:translateY(-50%)}
+#nl-pet .bubble{white-space:normal;width:max-content;max-width:min(220px,calc(100vw - 90px));height:auto;overflow-wrap:anywhere;line-height:1.5;box-sizing:border-box}
 </style>
 </head>
 <body class="locked">
@@ -584,7 +588,7 @@ body.modal-open{overflow:hidden}
 </div></footer>
 
 <div id="nl-pet" title="摸摸奶龍"><div class="bubble" id="pbub"></div><img src="/img/nl3.webp?v=2" alt="" loading="lazy" draggable="false" id="pimg"></div>
-<div id="corner" title="?"><div class="bubble" id="cbub"></div><img src="/img/corner.webp?v=1" alt="" draggable="false"></div>
+<div id="corner" title="?"><div class="bubble" id="cbub"></div><img src="/img/corner.webp?v=2" alt="" draggable="false"></div>
 <div id="modal" role="dialog" aria-modal="true"><div class="box"><div class="hd"><b id="mt"></b><button id="mx" aria-label="關閉">✕</button></div><div class="bd" id="mb"></div></div></div>
 
 <script>
