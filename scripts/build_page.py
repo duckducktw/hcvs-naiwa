@@ -113,7 +113,7 @@ T=[
 ('>重生回到國三那年，<br>我含淚填下了竹工<','>重生回到國三那年，<br>我含淚填下了竹工，<br>這次我要讓焊槍記住我的名字<'),
 ('>入學資訊</a>\n        <a class="btn btn-ghost" href="#news">最新消息</a>','>入學資訊（奶龍親選）</a>\n        <a class="btn btn-ghost" href="#news">最新消息（燙嘴）</a>'),
 ('>奶龍一則一則舔過，眼睛已經不行了<','>每一則都是奶龍用肚子壓出來的，所以很平<'),
-('>九條命，一條比一條硬<','>九科一心，焊得比你的感情還牢<'),
+('>九條命，一條比一條硬<','>八科一心，互相甩鍋比你的感情還牢<'),
 ('>十一位長老鎮守竹工，蓋章蓋到手斷<','>十一位長老鎮守竹工，公文跑一趟等於取經<'),
 ('>八十年前它就在了，八十年後奶龍還在<','>學校八十歲了，奶龍還是三歲，這就是差距<'),
 ('>點下去的那一刻，命運齒輪開始轉動<','>點下去的那一刻，命運齒輪開始轉動，然後卡住，因為它是板金科做的<'),
@@ -150,6 +150,50 @@ newlines=['我是奶龍！我才是奶龍！','我不是胖，我是被段考壓
  '老師說這題會考，奶龍說這題會烤','我的人生就像板金，一敲就凹','車床轉一圈，奶龍暈三天',
  '你以為我在笑？我是在哭，只是長這樣','福利社的麵包，是我活下去的唯一理由','這不是肥肉，這是我的散熱片',
  '摸我肚子，下次段考加十分（騙你的，加一分）','我要成為焊接王的男人！']
+# 公平嘲笑：每科都要有技術機制，不只換科名
+# 直接改掉原本鈑金獨佔的兩個主視覺文案
+s=s.replace('點下去的那一刻，命運齒輪開始轉動，然後卡住，因為它是板金科做的','點下去的那一刻，八科的命運齒輪一起開始空轉')
+s=s.replace('前世我是一塊板金，<em>這一世，我要把自己焊回竹工</em>','八科一視同仁，<em>誰都別想完整畢業</em>')
+
+# 公平受害名單：九個正式科別＋資源班彩蛋
+roast=[
+ ('機械科','車床轉得比腦袋快，工件還沒飛出去，早餐先飛了。'),
+ ('板金科','鈑金不是把鐵敲平，是把你的人生敲凹再叫你量公差。'),
+ ('製圖科','畫線畫到 0.3mm，人生方向誤差三公里。'),
+ ('室內空間設計科','渲染圖像豪宅，模型像違建，最後睡在電腦教室。'),
+ ('電機科','歐姆定律背得滾瓜爛熟，插座沒電第一個去找總務處。'),
+ ('資訊科','第一支程式是 Hello World，最後一支還是 Hello World，只是換成 Python。'),
+ ('化工科','滴定終點看得見，自己人生的終點看不見；報告倒是每週準時爆炸。'),
+ ('餐飲服務科','擺盤三小時、吃完三分鐘，最大客訴來自實習老師的眉毛。'),
+]
+links={'機械科':'40','板金科':'41','製圖科':'44','室內空間設計科':'171','電機科':'42','資訊科':'195','化工科':'43','餐飲服務科':'46'}
+cards=''.join(f'<a class="roast-card" href="https://www.hcvs.hc.edu.tw/ischool/publish_page/{links[n]}" target="_blank" rel="noopener"><b>{n}</b><span>{q}</span></a>' for n,q in roast)
+block=f'''<section id="roast"><div class="wrap"><div class="sec-h"><h2>⚖️ 八科公平受害名單</h2><p>不偏袒、不歧視，每科都有平等被奶龍公開處刑的權利</p></div><div class="roast-grid">{cards}</div></div></section>'''
+s=s.replace('<section class="alt" id="units">',block+'\n<section class="alt" id="units">',1)
+
+roast_css='''
+.roast-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.roast-card{display:flex;flex-direction:column;gap:8px;background:var(--card);border:2px solid var(--fg);border-radius:18px;padding:20px;color:var(--fg);box-shadow:5px 5px 0 var(--primary);transition:.15s}
+.roast-card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--primary)}
+.roast-card b{font-family:var(--serif);font-size:21px}
+.roast-card span{line-height:1.7;color:#4b5563}
+@media(max-width:850px){.roast-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.roast-grid{grid-template-columns:1fr}.roast-card{padding:17px}}
+'''
+s=s.replace('</style>',roast_css+'</style>',1)
+
+# 奶龍點擊台詞也平均分配，不再讓鈑金／電機／機械包辦
+extra=[q for _,q in roast]+[
+ '機械科說公差正負 0.01，奶龍的成績正負 60。',
+ '製圖科 ctrl+z 按得回線條，按不回熬夜。',
+ '室設科最大的空間設計，是把作業塞進截止日前。',
+ '資訊科最穩定的功能，是每次 demo 前必定更新。',
+ '化工科說物質守恆，奶龍說睡眠不守恆。',
+ '餐飲科問幾分熟，奶龍說段考三分熟。',
+]
+# 在既有 newlines 形成後擴充
+newlines.extend(extra)
+
 s=re.sub(r"const LINES=\[[^\]]*\];","const LINES="+repr(newlines).replace("', '","','")+";",s,count=1)
 s=s.replace("say(pb,'恭喜你，刷到了竹工奶龍，八十年才出一次')","say(pb,'恭喜你刷到竹工奶龍，八十年才出一次，不轉發段考全倒')")
 # 右下角那隻互動

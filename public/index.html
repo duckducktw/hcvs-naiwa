@@ -300,6 +300,14 @@ body.locked #nl-pet{display:none}
 .art-body a{color:var(--accent);text-decoration:underline}
 .art-foot{margin-top:18px;padding-top:14px;border-top:2px dashed var(--border);text-align:right}
 
+.roast-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.roast-card{display:flex;flex-direction:column;gap:8px;background:var(--card);border:2px solid var(--fg);border-radius:18px;padding:20px;color:var(--fg);box-shadow:5px 5px 0 var(--primary);transition:.15s}
+.roast-card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--primary)}
+.roast-card b{font-family:var(--serif);font-size:21px}
+.roast-card span{line-height:1.7;color:#4b5563}
+@media(max-width:850px){.roast-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.roast-grid{grid-template-columns:1fr}.roast-card{padding:17px}}
+
 /* 通用：不准任何東西把頁面撐寬 */
 html,body{max-width:100%;overflow-x:hidden}
 #nl-bg{width:100vw;max-width:100%}
@@ -503,17 +511,18 @@ body.modal-open{overflow:hidden}
 
   <div class="stats"><div class="wrap">
     <div class="stat"><img class="nl" src="/img/nl1.webp?v=2" alt="" loading="lazy" draggable="false"><b id="st-news">—</b><span>校園公告</span><small>每一則都是奶龍用肚子壓出來的，所以很平</small></div>
-    <div class="stat"><img class="nl" src="/img/nl2.webp?v=2" alt="" loading="lazy" draggable="false"><b>9</b><span>專業科別</span><small>九科一心，焊得比你的感情還牢</small></div>
+    <div class="stat"><img class="nl" src="/img/nl2.webp?v=2" alt="" loading="lazy" draggable="false"><b>9</b><span>專業科別</span><small>八科一心，互相甩鍋比你的感情還牢</small></div>
     <div class="stat"><img class="nl" src="/img/nl3.webp?v=2" alt="" loading="lazy" draggable="false"><b>11</b><span>行政單位</span><small>十一位長老鎮守竹工，公文跑一趟等於取經</small></div>
     <div class="stat"><img class="nl" src="/img/nl4.webp?v=2" alt="" loading="lazy" draggable="false"><b>80+</b><span>週年</span><small>學校八十歲了，奶龍還是三歲，這就是差距</small></div>
   </div></div>
 
   <section><div class="wrap">
-    <div class="sec-h"><h2><img class="nl" src="/img/nl5.webp?v=2" alt="" loading="lazy" draggable="false">快速入口</h2><p>點下去的那一刻，命運齒輪開始轉動，然後卡住，因為它是板金科做的</p></div>
+    <div class="sec-h"><h2><img class="nl" src="/img/nl5.webp?v=2" alt="" loading="lazy" draggable="false">快速入口</h2><p>點下去的那一刻，八科的命運齒輪一起開始空轉</p></div>
     <div class="quick" id="quick"></div>
   </div></section>
 
-  <section class="alt" id="units"><div class="wrap">
+  <section id="roast"><div class="wrap"><div class="sec-h"><h2>⚖️ 八科公平受害名單</h2><p>不偏袒、不歧視，每科都有平等被奶龍公開處刑的權利</p></div><div class="roast-grid"><a class="roast-card" href="https://www.hcvs.hc.edu.tw/ischool/publish_page/40" target="_blank" rel="noopener"><b>機械科</b><span>車床轉得比腦袋快，工件還沒飛出去，早餐先飛了。</span></a><a class="roast-card" href="https://www.hcvs.hc.edu.tw/ischool/publish_page/41" target="_blank" rel="noopener"><b>板金科</b><span>鈑金不是把鐵敲平，是把你的人生敲凹再叫你量公差。</span></a><a class="roast-card" href="https://www.hcvs.hc.edu.tw/ischool/publish_page/44" target="_blank" rel="noopener"><b>製圖科</b><span>畫線畫到 0.3mm，人生方向誤差三公里。</span></a><a class="roast-card" href="https://www.hcvs.hc.edu.tw/ischool/publish_page/171" target="_blank" rel="noopener"><b>室內空間設計科</b><span>渲染圖像豪宅，模型像違建，最後睡在電腦教室。</span></a><a class="roast-card" href="https://www.hcvs.hc.edu.tw/ischool/publish_page/42" target="_blank" rel="noopener"><b>電機科</b><span>歐姆定律背得滾瓜爛熟，插座沒電第一個去找總務處。</span></a><a class="roast-card" href="https://www.hcvs.hc.edu.tw/ischool/publish_page/195" target="_blank" rel="noopener"><b>資訊科</b><span>第一支程式是 Hello World，最後一支還是 Hello World，只是換成 Python。</span></a><a class="roast-card" href="https://www.hcvs.hc.edu.tw/ischool/publish_page/43" target="_blank" rel="noopener"><b>化工科</b><span>滴定終點看得見，自己人生的終點看不見；報告倒是每週準時爆炸。</span></a><a class="roast-card" href="https://www.hcvs.hc.edu.tw/ischool/publish_page/46" target="_blank" rel="noopener"><b>餐飲服務科</b><span>擺盤三小時、吃完三分鐘，最大客訴來自實習老師的眉毛。</span></a></div></div></section>
+<section class="alt" id="units"><div class="wrap">
     <div class="sec-h"><h2><img class="nl" src="/img/nl6.webp?v=2" alt="" loading="lazy" draggable="false">學校單位</h2><p>每個處室都是某個人的白月光，也是某個人的公文地獄</p></div>
     <div class="units" id="unitcards"></div>
   </div></section>
@@ -551,7 +560,7 @@ body.modal-open{overflow:hidden}
   </div></section>
 
   <div class="wrap"><div class="band"><img class="nl-big" src="/img/nl4.webp?v=2" alt="" loading="lazy" draggable="false">
-    <h2>前世我是一塊板金，<em>這一世，我要把自己焊回竹工</em></h2>
+    <h2>八科一視同仁，<em>誰都別想完整畢業</em></h2>
     <div class="row">
       <a class="btn btn-y" href="https://www.hcvs.hc.edu.tw/ischool/publish_page/14/?cid=433" target="_blank" rel="noopener">入學資訊</a>
       <a class="btn btn-ghost" href="https://www.facebook.com/NationalHCVS" target="_blank" rel="noopener">Facebook 粉絲專頁</a>
@@ -688,7 +697,7 @@ $('#agree')&&($('#agree').onclick=()=>{sessionStorage.setItem('hcvs-naiwa-ok','1
 $('#disagree')&&($('#disagree').onclick=()=>{document.querySelectorAll('body>*:not(#bye)').forEach(e=>e.remove());$('#bye').style.display='flex';});
 
 /* 奶龍互動 */
-const LINES=['我是奶龍！我才是奶龍！','我不是胖，我是被段考壓扁的','重生回到開學前，我發誓這次一定要讀書，然後我又睡著了','別人重生奪權復仇，奶龍重生只想吃福利社','實習工場的焊槍，是我前世的愛人','一週就那七天，五天都在上課，兩天在補考','教官的眼神，比我的未來還銳利','你點我一下，我就少一塊肉，但奶龍願意','我不懂電路學，但我懂你','統測倒數？奶龍只會倒立','歐姆定律說 V=IR，奶龍說 V=我餓了','電阻是用來阻止電流的，我是用來阻止你讀書的','老師說這題會考，奶龍說這題會烤','我的人生就像板金，一敲就凹','車床轉一圈，奶龍暈三天','你以為我在笑？我是在哭，只是長這樣','福利社的麵包，是我活下去的唯一理由','這不是肥肉，這是我的散熱片','摸我肚子，下次段考加十分（騙你的，加一分）','我要成為焊接王的男人！'];
+const LINES=['我是奶龍！我才是奶龍！','我不是胖，我是被段考壓扁的','重生回到開學前，我發誓這次一定要讀書，然後我又睡著了','別人重生奪權復仇，奶龍重生只想吃福利社','實習工場的焊槍，是我前世的愛人','一週就那七天，五天都在上課，兩天在補考','教官的眼神，比我的未來還銳利','你點我一下，我就少一塊肉，但奶龍願意','我不懂電路學，但我懂你','統測倒數？奶龍只會倒立','歐姆定律說 V=IR，奶龍說 V=我餓了','電阻是用來阻止電流的，我是用來阻止你讀書的','老師說這題會考，奶龍說這題會烤','我的人生就像板金，一敲就凹','車床轉一圈，奶龍暈三天','你以為我在笑？我是在哭，只是長這樣','福利社的麵包，是我活下去的唯一理由','這不是肥肉，這是我的散熱片','摸我肚子，下次段考加十分（騙你的，加一分）','我要成為焊接王的男人！','車床轉得比腦袋快，工件還沒飛出去，早餐先飛了。','鈑金不是把鐵敲平，是把你的人生敲凹再叫你量公差。','畫線畫到 0.3mm，人生方向誤差三公里。','渲染圖像豪宅，模型像違建，最後睡在電腦教室。','歐姆定律背得滾瓜爛熟，插座沒電第一個去找總務處。','第一支程式是 Hello World，最後一支還是 Hello World，只是換成 Python。','滴定終點看得見，自己人生的終點看不見；報告倒是每週準時爆炸。','擺盤三小時、吃完三分鐘，最大客訴來自實習老師的眉毛。','機械科說公差正負 0.01，奶龍的成績正負 60。','製圖科 ctrl+z 按得回線條，按不回熬夜。','室設科最大的空間設計，是把作業塞進截止日前。','資訊科最穩定的功能，是每次 demo 前必定更新。','化工科說物質守恆，奶龍說睡眠不守恆。','餐飲科問幾分熟，奶龍說段考三分熟。'];
 function say(el,t){el.textContent=t;el.parentElement.classList.add('talk');clearTimeout(el._t);el._t=setTimeout(()=>el.parentElement.classList.remove('talk'),2400);}
 function burst(x,y){for(let i=0;i<8;i++){const d=document.createElement('div');d.className='burst';d.innerHTML='<img src="/img/nl'+((Math.random()*8)|0)+'.webp?v=2" alt="" style="width:100%;height:100%;object-fit:contain">';d.style.left=(x-18)+'px';d.style.top=(y-18)+'px';document.body.appendChild(d);const a=Math.PI*2*i/8,r=90+Math.random()*50;requestAnimationFrame(()=>requestAnimationFrame(()=>{d.style.transform=`translate(${Math.cos(a)*r}px,${Math.sin(a)*r}px) rotate(${Math.random()*360}deg) scale(.6)`;d.style.opacity='0';}));setTimeout(()=>d.remove(),1000);}}
 function initNL(){
