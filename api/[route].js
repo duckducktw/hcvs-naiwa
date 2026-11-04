@@ -1,6 +1,7 @@
 // 新竹高工官網 奶龍風重製（非官方）— Vercel serverless：代理 ischool 公開 API（官方 API 無 CORS）
 import UNITS from '../lib/units.js';
 import { parsePage, parseShowPage } from '../lib/page.js';
+import * as CT from '../lib/classtable.js';
 
 const ROOT = 'https://www.hcvs.hc.edu.tw/ischool/';
 const TAB_UID = 'WID_0_15_82ff8072601d6250aecc3ee4f26ac4a49b1d586a';
@@ -127,6 +128,22 @@ export default async function handler(req, res) {
       res.setHeader('content-disposition', 'inline');
       res.setHeader('cache-control', 'public, s-maxage=86400');
       return res.status(200).send(buf);
+    }
+    if (route === 'ct') {
+      // 課表（欣河雲端公開查詢）：?op=terms | options&type= | table&type=&no=
+      const op = q.get('op');
+      const type = ['Class', 'Teacher', 'Classroom'].includes(q.get('type')) ? q.get('type') : '';
+      const yt = /^\d{2,3}_[12]$/.test(q.get('yt') || '') ? q.get('yt').split('_') : null;
+      const json = (o, ttl) => send({ ok: true, body: JSON.stringify(o) }, ttl, 'application/json; charset=utf-8');
+      if (op === 'terms') return json(await CT.terms(), 3600);
+      if (!type || !yt) return res.status(400).send('bad params');
+      if (op === 'options') return json(await CT.options(type, yt[0], yt[1]), 3600);
+      if (op === 'table') {
+        const no = q.get('no') || '';
+        if (!/^[A-Za-z0-9]{1,8}$/.test(no)) return res.status(400).send('bad no');
+        return json(await CT.timetable(type, no, yt[0], yt[1]), 1800);
+      }
+      return res.status(400).send('bad op');
     }
     if (route === 'carousel') {
       return send(await up('widget/carousel/news_query_json_field.php', form(new URLSearchParams({ uid: CAROUSEL_UID }))), 3600);
